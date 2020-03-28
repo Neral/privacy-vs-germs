@@ -18,34 +18,19 @@ const port = env.PORT || 8081
 app.listen(port, () => console.log(`Server running on port ${port}`))
 app.get("/", (req, res, next) => res.send("Privacy Vs Germs"))
 
-class Location {
-    coordinates: Coordinates
+interface Location {
+    coords: Coordinates
     time: Time
-
-    constructor(coordinates: Coordinates, time: Time) {
-        this.coordinates = coordinates
-        this.time = time
-    }
 }
 
-class Time {
+interface Time {
     from: number
     to: number
-
-    constructor(from: number, to: number) {
-        this.from = from
-        this.to = to
-    }
 }
 
-class Coordinates {
+interface Coordinates {
     lat: number
     lon: number
-
-    constructor(lat: number, lon: number) {
-        this.lat = lat
-        this.lon = lon
-    }
 }
 
 const locationsIndex = "locations"
@@ -56,7 +41,7 @@ app.post("/locations/setup-index", async (req, res) => {
         body: {
             mappings: {
                 properties: {
-                    coordinates: { type: "geo_point" },
+                    coords: { type: "geo_point" },
                     time: {
                         properties: {
                             from: { type: "integer" },
@@ -84,18 +69,22 @@ app.get("/locations", async (req, res) => {
         body: {
             query: {
                 bool: {
-                    should: locations.map(location => ({
-                        geo_distance: {
-                            distance: "10m",
-                            coordinates: {
-                                lat: location.coordinates.lat,
-                                lon: location.coordinates.lon
+                    should: locations.map(location => {
+                        const coordinates = location.coords;
+                        return {
+                            geo_distance: {
+                                distance: "10m",
+                                coordinates: {
+                                    lat: coordinates.lat,
+                                    lon: coordinates.lon
+                                }
                             }
                         }
-                    }))
+                    })
                 }
             }
         }
     })
-    res.send(result)
+    const foundLocations = result.body.hits.hits.map((record: any) => record._source)
+    res.send(foundLocations)
 })
