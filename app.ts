@@ -36,8 +36,14 @@ class Location {
     }
 }
 
+const locationsIndex = "locations"
+
 app.post("/locations", (req, res) => {
     const locations: Location[] = req.body
-    const body = locations.flatMap(location => [{ index: { _index: "locations" } }, location])
+    const body = locations.flatMap(location => [{ index: { _index: locationsIndex } }, location])
     elasticClient.bulk({ refresh: "true", body: body }, (err, resp) => res.send())
+})
+
+app.get("/locations", (req, res) => {
+    elasticClient.search({ index: locationsIndex }, (err, resp) => res.send(resp.body.hits.hits))
 })
