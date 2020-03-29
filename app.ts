@@ -19,14 +19,14 @@ elasticClient.indices.create({
                     properties: {
                         emailHash: { type: "text" },
                         testType: { type: "text" },
-                        testDate: { type: "integer" }
+                        testDate: { type: "date" }
                     }
                 },
                 coords: { type: "geo_point" },
                 time: {
                     properties: {
-                        from: { type: "integer" },
-                        to: { type: "integer" }
+                        from: { type: "date" },
+                        to: { type: "date" }
                     }
                 }
             }
@@ -59,8 +59,8 @@ class UserLocationInfo {
 class UserInfo {
     emailHash: string
     testType: TestType
-    testDate: number
-    constructor(emailHash: string, testType: TestType, testDate: number) {
+    testDate: bigint
+    constructor(emailHash: string, testType: TestType, testDate: bigint) {
         this.emailHash = emailHash
         this.testType = testType
         this.testDate = testDate
@@ -68,9 +68,9 @@ class UserInfo {
 }
 
 class Time {
-    from: number
-    to: number
-    constructor(from: number, to: number) {
+    from: bigint
+    to: bigint
+    constructor(from: bigint, to: bigint) {
         this.from = from
         this.to = to
     }
@@ -88,13 +88,13 @@ class Coordinates {
 interface LocationDto {
     lat: number
     lon: number
-    from: number
-    to: number
+    from: bigint
+    to: bigint
 }
 
 interface AddLocationsCommand {
     email: string
-    testDate: number
+    testDate: bigint
     testType: TestType
     locations: LocationDto[]
 }
