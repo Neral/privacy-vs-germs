@@ -9,7 +9,26 @@ const elasticClient = new Client({
     node: env.ELASTICSEARCH_URI || "http://localhost:9200"
 })
 
-const app: express.Application = express()
+const locationsIndex = "locations"
+
+elasticClient.indices.create({
+    index: locationsIndex,
+    body: {
+        mappings: {
+            properties: {
+                coords: { type: "geo_point" },
+                time: {
+                    properties: {
+                        from: { type: "integer" },
+                        to: { type: "integer" }
+                    }
+                }
+            }
+        }
+    }
+}, { ignore: [400] })
+
+const app = express()
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -33,28 +52,6 @@ interface Coordinates {
     lon: number
 }
 
-const locationsIndex = "locations"
-
-app.post("/locations/setup-index", async (req, res) => {
-    await elasticClient.indices.create({
-        index: locationsIndex,
-        body: {
-            mappings: {
-                properties: {
-                    coords: { type: "geo_point" },
-                    time: {
-                        properties: {
-                            from: { type: "integer" },
-                            to: { type: "integer" }
-                        }
-                    }
-                }
-            }
-        }
-    }, { ignore: [400] })
-    res.send()
-})
-
 app.post("/locations", async (req, res) => {
     const locations: Location[] = req.body
     const body = locations.flatMap(location => [{ index: { _index: locationsIndex } }, location])
@@ -74,7 +71,7 @@ app.get("/locations", async (req, res) => {
                         return {
                             geo_distance: {
                                 distance: "10m",
-                                coordinates: {
+                                coords: {
                                     lat: coordinates.lat,
                                     lon: coordinates.lon
                                 }
