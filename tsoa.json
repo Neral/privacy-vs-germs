@@ -1,0 +1,12 @@
+{
+    "swagger": {
+        "outputDirectory": ".",
+        "entryFile": "app.ts",
+        "noImplicitAdditionalProperties": "silently-remove-extras"
+    },
+    "routes": {
+        "basePath": "/",
+        "entryFile": "app.ts",
+        "routesDir": "."
+    }
+}

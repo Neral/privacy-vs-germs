@@ -1,0 +1,181 @@
+{
+	"basePath": "/",
+	"consumes": [
+		"application/json"
+	],
+	"definitions": {
+		"LocationDto": {
+			"properties": {
+				"lat": {
+					"type": "number",
+					"format": "double"
+				},
+				"lon": {
+					"type": "number",
+					"format": "double"
+				},
+				"from": {
+					"type": "number",
+					"format": "double"
+				},
+				"to": {
+					"type": "number",
+					"format": "double"
+				}
+			},
+			"required": [
+				"lat",
+				"lon",
+				"from",
+				"to"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"AddLocationsCommand": {
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"testDate": {
+					"type": "number",
+					"format": "double"
+				},
+				"testType": {
+					"type": "string",
+					"enum": [
+						"COVID1",
+						"COVID2"
+					]
+				},
+				"locations": {
+					"items": {
+						"$ref": "#/definitions/LocationDto"
+					},
+					"type": "array"
+				}
+			},
+			"required": [
+				"email",
+				"testDate",
+				"testType",
+				"locations"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"LocationWithScoreDto": {
+			"properties": {
+				"lat": {
+					"type": "number",
+					"format": "double"
+				},
+				"lon": {
+					"type": "number",
+					"format": "double"
+				},
+				"from": {
+					"type": "number",
+					"format": "double"
+				},
+				"to": {
+					"type": "number",
+					"format": "double"
+				},
+				"score": {
+					"type": "number",
+					"format": "double"
+				}
+			},
+			"required": [
+				"lat",
+				"lon",
+				"from",
+				"to",
+				"score"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
+		"GetLocationsScoreQuery": {
+			"properties": {
+				"locations": {
+					"items": {
+						"$ref": "#/definitions/LocationDto"
+					},
+					"type": "array"
+				}
+			},
+			"required": [
+				"locations"
+			],
+			"type": "object",
+			"additionalProperties": false
+		}
+	},
+	"info": {
+		"title": "privacy-vs-germs",
+		"version": "1.0.0"
+	},
+	"paths": {
+		"/locations/add": {
+			"post": {
+				"operationId": "Add",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "command",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/AddLocationsCommand"
+						}
+					}
+				]
+			}
+		},
+		"/locations/calculate-scores": {
+			"post": {
+				"operationId": "Get",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"items": {
+								"$ref": "#/definitions/LocationWithScoreDto"
+							},
+							"type": "array"
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/GetLocationsScoreQuery"
+						}
+					}
+				]
+			}
+		}
+	},
+	"produces": [
+		"application/json"
+	],
+	"swagger": "2.0",
+	"securityDefinitions": {}
+}
