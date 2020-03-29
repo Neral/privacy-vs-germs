@@ -111,7 +111,7 @@ interface GetLocationsScoreQuery {
     locations: LocationDto[]
 }
 
-app.post("/locations", async (req, res) => {
+app.post("/locations/add", async (req, res) => {
     const command: AddLocationsCommand = req.body
     const userLocationInfos = command.locations.map(location => {
         const emailHash = sha256(command.email)
@@ -125,7 +125,7 @@ app.post("/locations", async (req, res) => {
     res.send()
 })
 
-app.get("/locations", async (req, res) => {
+app.post("/locations/calculate-scores", async (req, res) => {
     const query: GetLocationsScoreQuery = req.body
     const locationsWithScore: LocationWithScoreDto[] = []
     
