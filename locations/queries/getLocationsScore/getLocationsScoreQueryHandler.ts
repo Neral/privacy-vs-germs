@@ -9,33 +9,33 @@ export class GetLocationsScoreQueryHandler {
     constructor(private client: Client, private locationInfoIndex: string) { }
 
     public async Handle(query: GetLocationsScoreQuery): Promise<LocationWithScoreDto[]> {
-        const locationsWithScore: LocationWithScoreDto[] = []
-
+        const body = []
         for (const location of query.locations) {
-            const searchResult = await this.client.search({
-                index: this.locationInfoIndex,
-                body: {
-                    query: {
-                        bool: {
-                            must: {
-                                geo_distance: {
-                                    distance: "50m",
-                                    coords: {
-                                        lat: location.lat,
-                                        lon: location.lon
-                                    }
+            body.push({}, {
+                query: {
+                    bool: {
+                        must: {
+                            geo_distance: {
+                                distance: "50m",
+                                coords: {
+                                    lat: location.lat,
+                                    lon: location.lon
                                 }
                             }
                         }
                     }
                 }
             })
+        }
+        const searchResult = await this.client.msearch({ index: this.locationInfoIndex, body: body })
+        const locationsWithScore = []
 
-            const userLocationInfos: UserLocationInfo[] = searchResult.body.hits.hits.map((record: any) => record._source)
+        for (let i = 0; i < query.locations.length; i++) {
+            const location = query.locations[i]
+            const userLocationInfos: UserLocationInfo[] = searchResult.body.responses[i].hits.hits.map((record: any) => record._source)
             const score = userLocationInfos
                 .map(userLocationInfo => LocationsScoreCalculator.calculateLocationScore(new Time(location.from, location.to), userLocationInfo.time))
                 .reduce((score, current) => score + current, 0)
-
             locationsWithScore.push({
                 score: score,
                 lat: location.lat,
