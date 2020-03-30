@@ -24,7 +24,8 @@ export class GetLocationsScoreQueryHandler {
                             }
                         }
                     }
-                }
+                },
+                size: 10000
             })
         }
         const searchResult = await this.client.msearch({ index: this.locationInfoIndex, body: body })
