@@ -12,19 +12,19 @@ const models: TsoaRoute.Models = {
     "LocationDto": {
         "dataType": "refObject",
         "properties": {
-            "lat": { "dataType": "double", "required": true },
-            "lon": { "dataType": "double", "required": true },
-            "from": { "dataType": "double", "required": true },
-            "to": { "dataType": "double", "required": true },
+            "latitude": { "dataType": "double", "required": true },
+            "longitude": { "dataType": "double", "required": true },
+            "timeFrom": { "dataType": "datetime", "required": true },
+            "timeTo": { "dataType": "datetime", "required": true },
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AddLocationsCommand": {
+    "AddUserTimelineCommand": {
         "dataType": "refObject",
         "properties": {
             "email": { "dataType": "string", "required": true },
-            "testDate": { "dataType": "double", "required": true },
+            "testDate": { "dataType": "datetime", "required": true },
             "testType": { "dataType": "enum", "enums": ["COVID1", "COVID2"], "required": true },
             "locations": { "dataType": "array", "array": { "ref": "LocationDto" }, "required": true },
         },
@@ -34,10 +34,10 @@ const models: TsoaRoute.Models = {
     "LocationWithScoreDto": {
         "dataType": "refObject",
         "properties": {
-            "lat": { "dataType": "double", "required": true },
-            "lon": { "dataType": "double", "required": true },
-            "from": { "dataType": "double", "required": true },
-            "to": { "dataType": "double", "required": true },
+            "latitude": { "dataType": "double", "required": true },
+            "longitude": { "dataType": "double", "required": true },
+            "timeFrom": { "dataType": "datetime", "required": true },
+            "timeTo": { "dataType": "datetime", "required": true },
             "score": { "dataType": "double", "required": true },
         },
         "additionalProperties": false,
@@ -64,7 +64,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/locations/add',
         function(request: any, response: any, next: any) {
             const args = {
-                command: { "in": "body", "name": "command", "required": true, "ref": "AddLocationsCommand" },
+                command: { "in": "body", "name": "command", "required": true, "ref": "AddUserTimelineCommand" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

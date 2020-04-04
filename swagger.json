@@ -6,40 +6,40 @@
 	"definitions": {
 		"LocationDto": {
 			"properties": {
-				"lat": {
+				"latitude": {
 					"type": "number",
 					"format": "double"
 				},
-				"lon": {
+				"longitude": {
 					"type": "number",
 					"format": "double"
 				},
-				"from": {
-					"type": "number",
-					"format": "double"
+				"timeFrom": {
+					"type": "string",
+					"format": "date-time"
 				},
-				"to": {
-					"type": "number",
-					"format": "double"
+				"timeTo": {
+					"type": "string",
+					"format": "date-time"
 				}
 			},
 			"required": [
-				"lat",
-				"lon",
-				"from",
-				"to"
+				"latitude",
+				"longitude",
+				"timeFrom",
+				"timeTo"
 			],
 			"type": "object",
 			"additionalProperties": false
 		},
-		"AddLocationsCommand": {
+		"AddUserTimelineCommand": {
 			"properties": {
 				"email": {
 					"type": "string"
 				},
 				"testDate": {
-					"type": "number",
-					"format": "double"
+					"type": "string",
+					"format": "date-time"
 				},
 				"testType": {
 					"type": "string",
@@ -66,21 +66,21 @@
 		},
 		"LocationWithScoreDto": {
 			"properties": {
-				"lat": {
+				"latitude": {
 					"type": "number",
 					"format": "double"
 				},
-				"lon": {
+				"longitude": {
 					"type": "number",
 					"format": "double"
 				},
-				"from": {
-					"type": "number",
-					"format": "double"
+				"timeFrom": {
+					"type": "string",
+					"format": "date-time"
 				},
-				"to": {
-					"type": "number",
-					"format": "double"
+				"timeTo": {
+					"type": "string",
+					"format": "date-time"
 				},
 				"score": {
 					"type": "number",
@@ -88,10 +88,10 @@
 				}
 			},
 			"required": [
-				"lat",
-				"lon",
-				"from",
-				"to",
+				"latitude",
+				"longitude",
+				"timeFrom",
+				"timeTo",
 				"score"
 			],
 			"type": "object",
@@ -136,7 +136,7 @@
 						"name": "command",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/AddLocationsCommand"
+							"$ref": "#/definitions/AddUserTimelineCommand"
 						}
 					}
 				]

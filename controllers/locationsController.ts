@@ -1,22 +1,19 @@
 import { Controller, Route, Post, Body } from "tsoa"
-import { AddLocationsCommand } from "../locations/commands/addLocations/addLocationsCommand"
-import { LocationWithScoreDto } from "../locations/dtos/locationWithScoreDto"
-import { GetLocationsScoreQuery } from "../locations/queries/getLocationsScore/getLocationsScoreQuery"
+import { AddUserTimelineCommand } from "../commands/addUserTimeline/addUserTimelineCommand"
+import { LocationWithScoreDto } from "../dtos/locationWithScoreDto"
+import { GetLocationsScoreQuery } from "../queries/getLocationsScore/getLocationsScoreQuery"
 import { Inject } from "typescript-ioc"
-import { AddLocationsCommandHandler } from "../locations/commands/addLocations/addLocationsCommandHandler"
-import { GetLocationsScoreQueryHandler } from "../locations/queries/getLocationsScore/getLocationsScoreQueryHandler"
+import { AddUserTimelineCommandHandler } from "../commands/addUserTimeline/addUserTimelineCommandHandler"
+import { GetLocationsScoreQueryHandler } from "../queries/getLocationsScore/getLocationsScoreQueryHandler"
 
 @Route("/locations")
 export class LocationsController extends Controller {
-
-    @Inject
-    private addLocationsCommandHandler!: AddLocationsCommandHandler
-    @Inject
-    private getLocationsScoreQueryHandler!: GetLocationsScoreQueryHandler
+    @Inject private addUserTimelineCommandHandler!: AddUserTimelineCommandHandler
+    @Inject private getLocationsScoreQueryHandler!: GetLocationsScoreQueryHandler
 
     @Post("/add")
-    public async Add(@Body() command: AddLocationsCommand): Promise<void> {
-        await this.addLocationsCommandHandler.Handle(command)
+    public async Add(@Body() command: AddUserTimelineCommand): Promise<void> {
+        await this.addUserTimelineCommandHandler.Handle(command)
     }
 
     @Post("/calculate-scores")

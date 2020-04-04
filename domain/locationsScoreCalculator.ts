@@ -1,44 +1,38 @@
-import { Time } from "./time"
+import { TimeInterval } from "./timeInterval"
 
 export class LocationsScoreCalculator {
-    public static calculateLocationScore(location1Time: Time, location2Time: Time): number {
-        const germsLifespanOnSurface = 360 * 60000
-        const noExposure = Number.MIN_SAFE_INTEGER
-        let exposureMilliseconds: number
+    public static calculateExposureScore(checkTimeInterval: TimeInterval, positiveCaseTimeInterval: TimeInterval): number {
+        if (!checkTimeInterval)
+            throw new Error("Check time interval must be provided.")
 
-        if (location2Time.from <= location1Time.from) {
-            if (location2Time.to <= location1Time.to) {
-                exposureMilliseconds = location2Time.to - location1Time.from
-            }
-            else {
-                exposureMilliseconds = location1Time.to - location1Time.from
-            }
-        }
-        else {
-            if (location2Time.to + germsLifespanOnSurface >= location1Time.to) {
-                if (location1Time.to < location2Time.from) {
-                    exposureMilliseconds = noExposure
-                }
-                else {
-                    exposureMilliseconds = location1Time.to - location2Time.from
-                }
-            }
-            else {
-                exposureMilliseconds = location2Time.to + germsLifespanOnSurface - location2Time.from
-            }
-        }
+        if (!positiveCaseTimeInterval)
+            throw new Error("Positive case time interval must be provided.")
 
-        const exposureMinutes = exposureMilliseconds / 60000
+        const germsLifespanOnSurface = 6 * 60 * 60 * 1000
+        const germsOnSurfaceTimeInterval = new TimeInterval(
+            positiveCaseTimeInterval.to, new Date(positiveCaseTimeInterval.to.valueOf() + germsLifespanOnSurface))
+        const exposedTimeInterval = new TimeInterval(positiveCaseTimeInterval.from, germsOnSurfaceTimeInterval.to)
 
-        if (exposureMinutes > 15)
-            return 10
+        if (!exposedTimeInterval.containsDate(checkTimeInterval.from) && !exposedTimeInterval.containsDate(checkTimeInterval.to))
+            return 0
 
-        if (exposureMinutes > 0)
-            return 5
-
-        if (exposureMinutes > -360)
+        if (germsOnSurfaceTimeInterval.containsDate(checkTimeInterval.from))
             return 2
 
-        return 0
+        let exposure: number
+
+        if (exposedTimeInterval.containsInterval(checkTimeInterval))
+            exposure = checkTimeInterval.to.valueOf() - checkTimeInterval.from.valueOf()
+
+        else if (checkTimeInterval.containsInterval(exposedTimeInterval))
+            exposure = exposedTimeInterval.to.valueOf() - exposedTimeInterval.from.valueOf()
+
+        else if (exposedTimeInterval.containsDate(checkTimeInterval.from))
+            exposure = exposedTimeInterval.to.valueOf() - checkTimeInterval.from.valueOf()
+
+        else
+            exposure = checkTimeInterval.to.valueOf() - exposedTimeInterval.from.valueOf()
+
+        return exposure > 15 * 60 * 1000 ? 10 : 5
     }
 }

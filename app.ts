@@ -5,9 +5,9 @@ import { Client } from "@elastic/elasticsearch"
 import "./controllers/locationsController"
 import { RegisterRoutes } from "./routes"
 import * as swaggerUi from "swagger-ui-express"
-import { Container } from "typescript-ioc"
-import { AddLocationsCommandHandler } from "./locations/commands/addLocations/addLocationsCommandHandler"
-import { GetLocationsScoreQueryHandler } from "./locations/queries/getLocationsScore/getLocationsScoreQueryHandler"
+import { Container, Scope } from "typescript-ioc"
+import { AddUserTimelineCommandHandler } from "./commands/addUserTimeline/addUserTimelineCommandHandler"
+import { GetLocationsScoreQueryHandler } from "./queries/getLocationsScore/getLocationsScoreQueryHandler"
 
 const env = process.env
 const port = env.PORT || 8081
@@ -19,35 +19,32 @@ app.use(bodyParser.json())
 RegisterRoutes(app)
 
 const elasticClient = new Client({ node: elasticSearchUri })
-const locationInfoIndex = "user-location-infos"
+const locationsIndex = "user-locations"
 
-const addLocationsCommandHandler = new AddLocationsCommandHandler(elasticClient, locationInfoIndex)
-Container.bind(AddLocationsCommandHandler).factory(() => addLocationsCommandHandler)
+Container
+    .bind(AddUserTimelineCommandHandler)
+    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex))
+    .scope(Scope.Singleton)
 
-const getLocationsScoreQueryHandler = new GetLocationsScoreQueryHandler(elasticClient, locationInfoIndex)
-Container.bind(GetLocationsScoreQueryHandler).factory(() => getLocationsScoreQueryHandler)
+Container
+    .bind(GetLocationsScoreQueryHandler)
+    .factory(() => new GetLocationsScoreQueryHandler(elasticClient, locationsIndex))
+    .scope(Scope.Singleton)
 
 try {
     elasticClient.indices.create({
-        index: locationInfoIndex,
+        index: locationsIndex,
         body: {
             mappings: {
                 properties: {
-                    userInfo: {
-                        properties: {
-                            emailHash: { type: "text" },
-                            testType: { type: "text" },
-                            testDate: { type: "date" }
-                        }
-                    },
-                    coords: { type: "geo_point" },
-                    time: {
-                        properties: {
-                            from: { type: "date" },
-                            to: { type: "date" }
-                        }
-                    }
-                }
+                    timelineId: { type: "text" },
+                    emailHash: { type: "text" },
+                    testType: { type: "text" },
+                    testDate: { type: "date" },
+                    coordinates: { type: "geo_point" },
+                    timeFrom: { type: "date" },
+                    timeTo: { type: "date" }
+                },
             }
         }
     }, { ignore: [400] })
