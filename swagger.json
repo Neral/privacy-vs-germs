@@ -64,6 +64,18 @@
 			"type": "object",
 			"additionalProperties": false
 		},
+		"DeleteUserTimelineDataCommand": {
+			"properties": {
+				"email": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"email"
+			],
+			"type": "object",
+			"additionalProperties": false
+		},
 		"LocationWithScoreDto": {
 			"properties": {
 				"latitude": {
@@ -137,6 +149,30 @@
 						"required": true,
 						"schema": {
 							"$ref": "#/definitions/AddUserTimelineCommand"
+						}
+					}
+				]
+			}
+		},
+		"/locations/delete": {
+			"post": {
+				"operationId": "Delete",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "command",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/DeleteUserTimelineDataCommand"
 						}
 					}
 				]

@@ -7,6 +7,7 @@ import { RegisterRoutes } from "./routes"
 import * as swaggerUi from "swagger-ui-express"
 import { Container, Scope } from "typescript-ioc"
 import { AddUserTimelineCommandHandler } from "./commands/addUserTimeline/addUserTimelineCommandHandler"
+import { DeleteUserTimelineDataCommandHandler } from "./commands/deleteUserTimelineData/deleteUserTimelineDataCommandHandler"
 import { GetLocationsScoreQueryHandler } from "./queries/getLocationsScore/getLocationsScoreQueryHandler"
 
 const env = process.env
@@ -24,6 +25,11 @@ const locationsIndex = "user-locations"
 Container
     .bind(AddUserTimelineCommandHandler)
     .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex))
+    .scope(Scope.Singleton)
+
+Container
+    .bind(DeleteUserTimelineDataCommandHandler)
+    .factory(() => new DeleteUserTimelineDataCommandHandler(elasticClient, locationsIndex))
     .scope(Scope.Singleton)
 
 Container

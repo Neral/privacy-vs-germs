@@ -25,7 +25,10 @@ export class GetLocationsScoreQueryHandler {
                 size: 10000
             })
         }
-        const searchResult = await this.client.msearch({ index: this.index, body: body })
+        const searchResult = await this.client.msearch({
+            index: this.index,
+            body: body
+        })
         const locationsWithScore = []
 
         for (let i = 0; i < query.locations.length; i++) {
