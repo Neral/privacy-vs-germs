@@ -42,11 +42,7 @@
 					"format": "date-time"
 				},
 				"testType": {
-					"type": "string",
-					"enum": [
-						"COVID1",
-						"COVID2"
-					]
+					"type": "string"
 				},
 				"locations": {
 					"items": {
