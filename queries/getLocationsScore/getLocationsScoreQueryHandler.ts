@@ -4,11 +4,13 @@ import { LocationWithScoreDto } from "../../dtos/locationWithScoreDto"
 import { LocationsScoreCalculator } from "../../domain/locationsScoreCalculator"
 import { UserLocation } from "../../elastic/userLocation"
 import { TimeInterval } from "../../domain/timeInterval"
+import { transformAndValidate } from "class-transformer-validator"
 
 export class GetLocationsScoreQueryHandler {
     constructor(private client: Client, private index: string) { }
 
     public async Handle(query: GetLocationsScoreQuery): Promise<LocationWithScoreDto[]> {
+        await transformAndValidate(GetLocationsScoreQuery, query)
         const body = []
         for (const location of query.locations) {
             body.push({}, {

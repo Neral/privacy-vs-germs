@@ -10,6 +10,7 @@ import { AddUserTimelineCommandHandler } from "./commands/addUserTimeline/addUse
 import { DeleteUserTimelineDataCommandHandler } from "./commands/deleteUserTimelineData/deleteUserTimelineDataCommandHandler"
 import { GetLocationsScoreQueryHandler } from "./queries/getLocationsScore/getLocationsScoreQueryHandler"
 import { ValidationError } from "class-validator"
+import { ValidateError } from "tsoa"
 
 const env = process.env
 const port = env.PORT || 8081
@@ -21,7 +22,9 @@ app.use(bodyParser.json())
 RegisterRoutes(app)
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
     if (Array.isArray(err) && err.length && err[0] instanceof ValidationError)
-        res.status(400).send(err)
+        res.status(400).send("Bad request. You are on your own mate!")
+    else if (err instanceof ValidateError)
+        res.status(400).send("Bad request. You are on your own mate!")
     else
         res.status(500).send("Something went wrong. Please try again later.")
 })

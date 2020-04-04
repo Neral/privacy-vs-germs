@@ -7,6 +7,7 @@
     "routes": {
         "basePath": "/",
         "entryFile": "app.ts",
-        "routesDir": "."
+        "routesDir": ".",
+        "middleware": "express"
     }
 }

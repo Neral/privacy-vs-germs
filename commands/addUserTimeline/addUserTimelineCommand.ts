@@ -1,19 +1,20 @@
 import { LocationDto } from "../../dtos/locationDto"
-import { IsEmail, IsDate, MinDate, MaxDate, IsNotEmpty, IsString, ArrayNotEmpty, ValidateNested } from "class-validator"
+import { IsEmail, MinDate, MaxDate, IsNotEmpty, ArrayNotEmpty, ValidateNested } from "class-validator"
+import { Type } from "class-transformer"
 
 export class AddUserTimelineCommand {
-    @IsEmail({}, { message: "Invalid email" })
+    @IsEmail({}, { message: "invalid email" })
     readonly email: string
 
-    @MinDate(new Date(2020, 0), { message: "Date is too old" })
-    @MaxDate(new Date(), { message: "Date cannot be in future" })
+    @MinDate(new Date(2020, 0), { message: "date is too old" })
+    @MaxDate(new Date(), { message: "date cannot be in future" })
     readonly testDate: Date
 
-    @IsString({ message: "Invalid test type" })
-    @IsNotEmpty({ message: "Invalid test type" })
+    @IsNotEmpty({ message: "invalid test type" })
     readonly testType: string
 
-    @ArrayNotEmpty({ message: "At least one location must be provided" })
+    @ArrayNotEmpty({ message: "at least one location must be provided" })
+    @Type(() => LocationDto)
     @ValidateNested()
     readonly locations: LocationDto[]
 

@@ -1,16 +1,22 @@
-import { IsLatitude, IsLongitude } from "class-validator"
+import { IsLatitude, IsLongitude, MinDate, MaxDate } from "class-validator"
+import { IsBiggerThan } from "../validationDecorators/isBiggerThan"
 
 export class LocationDto {
-    @IsLatitude({message: "Invalid latitude"})
+    @IsLatitude({ message: "invalid latitude" })
     readonly latitude: number
 
-    @IsLongitude({message: "Invalind longitude"})
+    @IsLongitude({ message: "invalid longitude" })
     readonly longitude: number
 
-    
+    @MinDate(new Date(2020, 0), { message: "date is too old" })
+    @MaxDate(new Date(), { message: "date cannot be in future" })
     readonly timeFrom: Date
+
+    @MinDate(new Date(2020, 0), { message: "date is too old" })
+    @MaxDate(new Date(), { message: "date cannot be in future" })
+    @IsBiggerThan("timeFrom", { message: "timeTo must be after timeFrom" })
     readonly timeTo: Date
-    
+
     constructor(
         latitude: number,
         longitude: number,

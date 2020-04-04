@@ -1,9 +1,7 @@
 import { IsEmail } from "class-validator"
 
 export class DeleteUserTimelineDataCommand {
-    @IsEmail({}, {
-        message: "Invalid email"
-    })
+    @IsEmail({}, { message: "invalid email" })
     readonly email: string
 
     constructor(email: string) {
