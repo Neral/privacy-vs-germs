@@ -3,11 +3,13 @@ import { sha256 } from "js-sha256"
 import { AddUserTimelineCommand } from "./addUserTimelineCommand"
 import { Client } from "@elastic/elasticsearch"
 import { UserLocation } from "../../elastic/userLocation"
+import { transformAndValidate } from "class-transformer-validator"
 
 export class AddUserTimelineCommandHandler {
     constructor(private client: Client, private index: string) { }
 
     public async Handle(command: AddUserTimelineCommand): Promise<void> {
+        await transformAndValidate(AddUserTimelineCommand, command)
         const timelineId = Guid.create().toString()
         const emailHash = sha256(command.email)
         await this.client.bulk({

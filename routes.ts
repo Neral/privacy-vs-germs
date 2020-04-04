@@ -25,7 +25,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "email": { "dataType": "string", "required": true },
             "testDate": { "dataType": "datetime", "required": true },
-            "testType": { "dataType": "enum", "enums": ["COVID1", "COVID2"], "required": true },
+            "testType": { "dataType": "string", "required": true },
             "locations": { "dataType": "array", "array": { "ref": "LocationDto" }, "required": true },
         },
         "additionalProperties": false,
