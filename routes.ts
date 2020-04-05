@@ -3,7 +3,7 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { LocationsController } from './controllers/locationsController';
+import { UserTimelineController } from './controllers/userTimelineController';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -84,7 +84,7 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new LocationsController();
+            const controller = new UserTimelineController();
 
 
             const promise = controller.Add.apply(controller, validatedArgs as any);
@@ -106,7 +106,7 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new LocationsController();
+            const controller = new UserTimelineController();
 
 
             const promise = controller.Delete.apply(controller, validatedArgs as any);
@@ -128,7 +128,7 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new LocationsController();
+            const controller = new UserTimelineController();
 
 
             const promise = controller.Get.apply(controller, validatedArgs as any);

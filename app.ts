@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express"
 import cors from "cors"
 import bodyParser from "body-parser"
 import { Client } from "@elastic/elasticsearch"
-import "./controllers/locationsController"
+import "./controllers/userTimelineController"
 import { RegisterRoutes } from "./routes"
 import * as swaggerUi from "swagger-ui-express"
 import { Container, Scope } from "typescript-ioc"
@@ -21,6 +21,7 @@ app.use(cors())
 app.use(bodyParser.json())
 RegisterRoutes(app)
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
+    console.error(err)
     if (Array.isArray(err) && err.length && err[0] instanceof ValidationError)
         res.status(400).send("Bad request. You are on your own mate!")
     else if (err instanceof ValidateError)

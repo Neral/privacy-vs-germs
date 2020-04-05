@@ -5,6 +5,7 @@ import { LocationsScoreCalculator } from "../../domain/locationsScoreCalculator"
 import { UserLocation } from "../../elastic/userLocation"
 import { TimeInterval } from "../../domain/timeInterval"
 import { transformAndValidate } from "class-transformer-validator"
+import { plainToClass } from "class-transformer"
 
 export class GetLocationsScoreQueryHandler {
     constructor(private client: Client, private index: string) { }
@@ -36,17 +37,7 @@ export class GetLocationsScoreQueryHandler {
         for (let i = 0; i < query.locations.length; i++) {
             const location = query.locations[i]
             const matchedLocations: UserLocation[] = searchResult.body.responses[i].hits.hits
-                .map((hit: any) => {
-                    const matchedLocationJson = hit._source
-                    return new UserLocation(
-                        matchedLocationJson.timelineId,
-                        matchedLocationJson.emailHash,
-                        matchedLocationJson.testType,
-                        new Date(matchedLocationJson.testDate),
-                        matchedLocationJson.coordinates,
-                        new Date(matchedLocationJson.timeFrom),
-                        new Date(matchedLocationJson.timeTo))
-                })
+                .map((hit: any) => plainToClass(UserLocation, hit._source))
             const score = matchedLocations
                 .map(matchedLocation => LocationsScoreCalculator.calculateExposureScore(
                     new TimeInterval(location.timeFrom, location.timeTo),

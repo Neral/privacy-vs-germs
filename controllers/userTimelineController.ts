@@ -9,7 +9,7 @@ import { GetLocationsScoreQuery } from "../queries/getLocationsScore/getLocation
 import { GetLocationsScoreQueryHandler } from "../queries/getLocationsScore/getLocationsScoreQueryHandler"
 
 @Route("/locations")
-export class LocationsController extends Controller {
+export class UserTimelineController extends Controller {
     @Inject private addUserTimelineCommandHandler!: AddUserTimelineCommandHandler
     @Inject private deleteUserTimelineDataCommandHandler!: DeleteUserTimelineDataCommandHandler
     @Inject private getLocationsScoreQueryHandler!: GetLocationsScoreQueryHandler
