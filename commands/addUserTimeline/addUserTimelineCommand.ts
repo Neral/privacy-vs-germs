@@ -6,6 +6,7 @@ export class AddUserTimelineCommand {
     @IsEmail({}, { message: "invalid email" })
     readonly email: string
 
+    @Type(() => Date)
     @MinDate(new Date(2020, 0), { message: "date is too old" })
     @MaxDate(new Date(), { message: "date cannot be in future" })
     readonly testDate: Date
