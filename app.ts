@@ -1,3 +1,4 @@
+import { MailSender } from './infrastructure/mailSender';
 import express, { Request, Response, NextFunction } from "express"
 import cors from "cors"
 import bodyParser from "body-parser"
@@ -15,6 +16,8 @@ import { ValidateError } from "tsoa"
 const env = process.env
 const port = env.PORT || 8081
 const elasticSearchUri = env.ELASTICSEARCH_URI || "http://localhost:9200"
+const smtpUserName = env.SMTP_USERNAME || ""
+const smtpPassword = env.SMTP_PASSWORD || ""
 
 const app = express()
 app.use(cors())
@@ -30,6 +33,7 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
         res.status(500).send("Something went wrong. Please try again later.")
 })
 
+const mailSender = new MailSender(smtpUserName, smtpPassword)
 const elasticClient = new Client({ node: elasticSearchUri })
 const locationsIndex = "user-locations"
 
