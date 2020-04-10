@@ -21,13 +21,18 @@
 				"timeTo": {
 					"type": "string",
 					"format": "date-time"
+				},
+				"radius": {
+					"type": "number",
+					"format": "double"
 				}
 			},
 			"required": [
 				"latitude",
 				"longitude",
 				"timeFrom",
-				"timeTo"
+				"timeTo",
+				"radius"
 			],
 			"type": "object",
 			"additionalProperties": false

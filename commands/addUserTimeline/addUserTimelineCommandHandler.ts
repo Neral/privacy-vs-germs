@@ -42,7 +42,8 @@ export class AddUserTimelineCommandHandler {
                     command.testDate,
                     [location.longitude, location.latitude],
                     location.timeFrom,
-                    location.timeTo))
+                    location.timeTo,
+                    location.radius))
                 .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
         })
     }
