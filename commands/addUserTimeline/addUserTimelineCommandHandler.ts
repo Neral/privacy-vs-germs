@@ -15,7 +15,7 @@ export class AddUserTimelineCommandHandler {
         await transformAndValidate(AddUserTimelineCommand, command)
 
         let userId: string
-
+        
         const mysqlConnection = mysql.createConnection(this.mysqlConnectionConfig)
         mysqlConnection.query(`SELECT guid from Users where email = '${command.email}' limit 1`, (err, rows) => {
             if (err)
@@ -31,19 +31,36 @@ export class AddUserTimelineCommandHandler {
             else {
                 userId = rows[0].guid
             }
-        })
+            const timelineId = Guid.create().toString()
         
-        await this.elasticClient.bulk({
-            refresh: "true",
-            body: command.locations
-                .map(location => new UserLocation(
-                    userId,
-                    command.testType,
-                    command.testDate,
-                    [location.longitude, location.latitude],
-                    location.timeFrom,
-                    location.timeTo))
-                .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
+            this.elasticClient.bulk({
+                refresh: "true",
+                body: command.locations
+                    .map(location => new UserLocation(
+                        timelineId,
+                        command.testType,
+                        command.testDate,
+                        [location.longitude, location.latitude],
+                        location.timeFrom,
+                        location.timeTo,
+                        false,
+                        userId))
+                    .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
+            })
+
+            this.elasticClient.updateByQuery({
+                index: this.elasticIndex,
+                body: {
+                    script: {
+                        source: "ctx._source['isConfirmed'] = true",
+                    },
+                    query: {
+                        match: {
+                            timelineId: timelineId
+                        }
+                    }
+                }    
+            })
         })
     }
 }

@@ -16,18 +16,26 @@ export class UserLocation {
     @Type(() => Date)
     readonly timeTo: Date
 
+    readonly isConfirmed: boolean
+
+    readonly userId: string
+
     constructor(
         timelineId: string,
         testType: string,
         testDate: Date,
         coordinates: number[],
         timeFrom: Date,
-        timeTo: Date) {
+        timeTo: Date,
+        isConfirmed: boolean,
+        userId: string) {
         this.timelineId = timelineId
         this.testType = testType
         this.testDate = testDate
         this.coordinates = coordinates
         this.timeFrom = timeFrom
         this.timeTo = timeTo
+        this.isConfirmed = isConfirmed
+        this.userId = userId
     }
 }

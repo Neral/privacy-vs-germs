@@ -76,7 +76,9 @@ try {
                     testDate: { type: "date" },
                     coordinates: { type: "geo_point" },
                     timeFrom: { type: "date" },
-                    timeTo: { type: "date" }
+                    timeTo: { type: "date" },
+                    isConfirmed: { type: "boolean" },
+                    userId: { type: "text" }
                 },
             }
         }
