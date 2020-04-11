@@ -3,8 +3,6 @@ import { Type } from "class-transformer"
 export class UserLocation {
     readonly timelineId: string
 
-    readonly emailHash: string
-
     readonly testType: string
 
     @Type(() => Date)
@@ -20,14 +18,12 @@ export class UserLocation {
 
     constructor(
         timelineId: string,
-        emailHash: string,
         testType: string,
         testDate: Date,
         coordinates: number[],
         timeFrom: Date,
         timeTo: Date) {
         this.timelineId = timelineId
-        this.emailHash = emailHash
         this.testType = testType
         this.testDate = testDate
         this.coordinates = coordinates
