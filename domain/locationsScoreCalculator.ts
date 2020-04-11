@@ -1,6 +1,5 @@
 import { TimeInterval } from "./timeInterval"
-
-export const minDistance = 2
+import { Config } from '../config/Config';
 
 export class LocationsScoreCalculator {
     
@@ -38,7 +37,7 @@ export class LocationsScoreCalculator {
             exposure = checkTimeInterval.to.valueOf() - exposedTimeInterval.from.valueOf()
 
         const score = exposure > 15 * 60 * 1000 ? 10 : 5
-        const isNearby = minDistance >= distance
+        const isNearby = distance <= Config.ACCURATE_DISTANCE
         return isNearby ? score : (distance / radius) * score
     }
 }
