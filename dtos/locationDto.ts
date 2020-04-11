@@ -1,6 +1,7 @@
 import { IsLatitude, IsLongitude, MinDate, MaxDate, IsNumber } from "class-validator"
 import { IsBiggerThan } from "../validationDecorators/isBiggerThan"
 import { Type } from "class-transformer"
+import { Config } from '../config/Config';
 
 export class LocationDto {
     @IsLatitude({ message: "invalid latitude" })
@@ -20,14 +21,15 @@ export class LocationDto {
     @IsBiggerThan("timeFrom", { message: "timeTo must be after timeFrom" })
     readonly timeTo: Date
     
-    readonly radius: number
+    @IsNumber()
+    readonly radius: number = Config.ACCURATE_DISTANCE
 
     constructor(
         latitude: number,
         longitude: number,
         timeFrom: Date,
         timeTo: Date,
-        radius: number) {
+        radius: number = Config.ACCURATE_DISTANCE) {
         this.latitude = latitude
         this.longitude = longitude
         this.timeFrom = timeFrom

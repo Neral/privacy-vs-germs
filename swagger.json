@@ -24,15 +24,15 @@
 				},
 				"radius": {
 					"type": "number",
-					"format": "double"
+					"format": "double",
+					"x-nullable": true
 				}
 			},
 			"required": [
 				"latitude",
 				"longitude",
 				"timeFrom",
-				"timeTo",
-				"radius"
+				"timeTo"
 			],
 			"type": "object",
 			"additionalProperties": false

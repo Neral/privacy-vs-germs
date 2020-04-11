@@ -4,6 +4,8 @@ import { Client } from "@elastic/elasticsearch"
 import { UserLocation } from "../../elastic/userLocation"
 import { transformAndValidate } from "class-transformer-validator"
 import mysql, { ConnectionConfig } from "mysql"
+import { LocationsScoreCalculator } from "../../domain/locationsScoreCalculator"
+import { Config } from '../../config/Config';
 
 export class AddUserTimelineCommandHandler {
     constructor(
@@ -43,7 +45,8 @@ export class AddUserTimelineCommandHandler {
                     [location.longitude, location.latitude],
                     location.timeFrom,
                     location.timeTo,
-                    location.radius))
+                    location.radius || Config.ACCURATE_DISTANCE
+                    ))
                 .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
         })
     }

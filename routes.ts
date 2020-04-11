@@ -16,7 +16,7 @@ const models: TsoaRoute.Models = {
             "longitude": { "dataType": "double", "required": true },
             "timeFrom": { "dataType": "datetime", "required": true },
             "timeTo": { "dataType": "datetime", "required": true },
-            "radius": { "dataType": "double", "required": true },
+            "radius": { "dataType": "double" },
         },
         "additionalProperties": false,
     },
