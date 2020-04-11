@@ -39,11 +39,14 @@ export class GetLocationsScoreQueryHandler {
             const location = query.locations[i]
             const matchedLocations: UserLocation[] = searchResult.body.responses[i].hits.hits
                 .map((hit: any) => plainToClass(UserLocation, hit._source))
-            const intersectingLocations = matchedLocations.filter( userLocation => 
+            const intersectingLocations = matchedLocations.filter(userLocation => 
                     LocationIntersectionCalculator.isIntersecting(userLocation, location)
                 )
             const score = intersectingLocations
                 .map(matchedLocation => LocationsScoreCalculator.calculateExposureScore(
+                    // FIXME Calculate distance once before filtering
+                    LocationIntersectionCalculator.distance(matchedLocation, location),
+                    matchedLocation.radius,
                     new TimeInterval(location.timeFrom, location.timeTo),
                     new TimeInterval(matchedLocation.timeFrom, matchedLocation.timeTo)
                 ))
@@ -59,7 +62,6 @@ export class GetLocationsScoreQueryHandler {
                 )
             )
         }
-
         return locationsWithScore
     }
 }

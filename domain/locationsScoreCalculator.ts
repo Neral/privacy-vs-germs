@@ -1,7 +1,11 @@
 import { TimeInterval } from "./timeInterval"
 
+export const minDistance = 2
+
 export class LocationsScoreCalculator {
-    public static calculateExposureScore(checkTimeInterval: TimeInterval, positiveCaseTimeInterval: TimeInterval): number {
+    
+
+    public static calculateExposureScore(distance: number, radius: number, checkTimeInterval: TimeInterval, positiveCaseTimeInterval: TimeInterval): number {
         if (!checkTimeInterval)
             throw new Error("Check time interval must be provided.")
 
@@ -33,6 +37,8 @@ export class LocationsScoreCalculator {
         else
             exposure = checkTimeInterval.to.valueOf() - exposedTimeInterval.from.valueOf()
 
-        return exposure > 15 * 60 * 1000 ? 10 : 5
+        const score = exposure > 15 * 60 * 1000 ? 10 : 5
+        const isNearby = minDistance >= distance
+        return isNearby ? score : (distance / radius) * score
     }
 }
