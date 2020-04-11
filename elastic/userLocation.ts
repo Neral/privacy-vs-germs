@@ -18,6 +18,10 @@ export class UserLocation {
 
     readonly radius: number
 
+    readonly isConfirmed: boolean
+
+    readonly userId: string
+
     constructor(
         timelineId: string,
         testType: string,
@@ -25,7 +29,9 @@ export class UserLocation {
         coordinates: number[],
         timeFrom: Date,
         timeTo: Date,
-        radius: number) {
+        radius: number,
+        isConfirmed: boolean,
+        userId: string) {
         this.timelineId = timelineId
         this.testType = testType
         this.testDate = testDate
@@ -33,5 +39,7 @@ export class UserLocation {
         this.timeFrom = timeFrom
         this.timeTo = timeTo
         this.radius = radius
+        this.isConfirmed = isConfirmed
+        this.userId = userId
     }
 }

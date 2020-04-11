@@ -13,6 +13,7 @@ import { GetLocationsScoreQueryHandler } from "./queries/getLocationsScore/getLo
 import { ValidationError } from "class-validator"
 import { ValidateError } from "tsoa"
 import { ConnectionConfig } from "mysql"
+import { ConfirmEmailCommandHandler } from './commands/confirmEmail/confirmEmailCommandHandler';
 
 const env = process.env
 const port = env.PORT || 8081
@@ -51,7 +52,7 @@ const mysqlConfig: ConnectionConfig = {
 
 Container
     .bind(AddUserTimelineCommandHandler)
-    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex, mysqlConfig))
+    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex, mysqlConfig, mailSender))
     .scope(Scope.Singleton)
 
 Container
@@ -62,6 +63,11 @@ Container
 Container
     .bind(GetLocationsScoreQueryHandler)
     .factory(() => new GetLocationsScoreQueryHandler(elasticClient, locationsIndex))
+    .scope(Scope.Singleton)
+
+Container
+    .bind(ConfirmEmailCommandHandler)
+    .factory(() => new ConfirmEmailCommandHandler(elasticClient, locationsIndex))
     .scope(Scope.Singleton)
 
 try {
@@ -76,7 +82,10 @@ try {
                     testDate: { type: "date" },
                     coordinates: { type: "geo_point" },
                     timeFrom: { type: "date" },
-                    timeTo: { type: "date" }
+                    timeTo: { type: "date" },
+                    radius: { type: "number"},
+                    isConfirmed: { type: "boolean" },
+                    userId: { type: "text" }
                 },
             }
         }

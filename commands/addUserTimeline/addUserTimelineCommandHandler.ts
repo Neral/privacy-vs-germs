@@ -1,3 +1,4 @@
+import { MailSender } from "./../../infrastructure/mailSender"
 import { Guid } from "guid-typescript"
 import { AddUserTimelineCommand } from "./addUserTimelineCommand"
 import { Client } from "@elastic/elasticsearch"
@@ -11,15 +12,16 @@ export class AddUserTimelineCommandHandler {
     constructor(
         private elasticClient: Client,
         private elasticIndex: string,
-        private mysqlConnectionConfig: ConnectionConfig) { }
+        private mysqlConnectionConfig: ConnectionConfig,
+        private mailSender: MailSender) { }
 
     public async Handle(command: AddUserTimelineCommand): Promise<void> {
         await transformAndValidate(AddUserTimelineCommand, command)
 
         let userId: string
-
+        
         const mysqlConnection = mysql.createConnection(this.mysqlConnectionConfig)
-        mysqlConnection.query(`SELECT guid from Users where email = '${command.email}' limit 1`, (err, rows) => {
+        mysqlConnection.query(`SELECT guid from Users where email = '${command.email}' limit 1`, async (err, rows) => {
             if (err)
                 throw err
 
@@ -33,21 +35,30 @@ export class AddUserTimelineCommandHandler {
             else {
                 userId = rows[0].guid
             }
-        })
+            const timelineId = Guid.create().toString()
         
-        await this.elasticClient.bulk({
-            refresh: "true",
-            body: command.locations
-                .map(location => new UserLocation(
-                    userId,
-                    command.testType,
-                    command.testDate,
-                    [location.longitude, location.latitude],
-                    location.timeFrom,
-                    location.timeTo,
-                    location.radius || Config.ACCURATE_DISTANCE
-                    ))
-                .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
+            await this.elasticClient.bulk({
+                refresh: "true",
+                body: command.locations
+                    .map(location => new UserLocation(
+                        timelineId,
+                        command.testType,
+                        command.testDate,
+                        [location.longitude, location.latitude],
+                        location.timeFrom,
+                        location.timeTo,
+                        location.radius || Config.ACCURATE_DISTANCE,
+                        false,
+                        userId))
+                    .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
+            })
+
+            await this.mailSender.SendMail(
+                command.email,
+                "Privacy Vs Germs Email Confirmation",
+                `Please confirm your email by clicking on this <a href="http://localhost:8081/locations/confirm/${timelineId}" target="_blank">link</a>`)
+
+        //TODO: update with deployed version link, think about serving there frontend as well
         })
-    }
+    }   
 }
