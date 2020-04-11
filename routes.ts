@@ -87,7 +87,7 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new UserTimelineController();
 
 
-            const promise = controller.Add.apply(controller, validatedArgs as any);
+            const promise = controller.add.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -109,7 +109,7 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new UserTimelineController();
 
 
-            const promise = controller.Delete.apply(controller, validatedArgs as any);
+            const promise = controller.delete.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -131,7 +131,29 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new UserTimelineController();
 
 
-            const promise = controller.Get.apply(controller, validatedArgs as any);
+            const promise = controller.get.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/locations/confirm/:confirmationCode',
+        function(request: any, response: any, next: any) {
+            const args = {
+                confirmationCode: { "in": "path", "name": "confirmationCode", "required": true, "dataType": "string" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new UserTimelineController();
+
+
+            const promise = controller.confirm.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

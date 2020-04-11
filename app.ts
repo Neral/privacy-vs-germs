@@ -51,7 +51,7 @@ const mysqlConfig: ConnectionConfig = {
 
 Container
     .bind(AddUserTimelineCommandHandler)
-    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex, mysqlConfig))
+    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex, mysqlConfig, mailSender))
     .scope(Scope.Singleton)
 
 Container
