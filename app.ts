@@ -13,6 +13,7 @@ import { GetLocationsScoreQueryHandler } from "./queries/getLocationsScore/getLo
 import { ValidationError } from "class-validator"
 import { ValidateError } from "tsoa"
 import { ConnectionConfig } from "mysql"
+import { ConfirmEmailCommandHandler } from './commands/confirmEmail/confirmEmailCommandHandler';
 
 const env = process.env
 const port = env.PORT || 8081
@@ -62,6 +63,11 @@ Container
 Container
     .bind(GetLocationsScoreQueryHandler)
     .factory(() => new GetLocationsScoreQueryHandler(elasticClient, locationsIndex))
+    .scope(Scope.Singleton)
+
+Container
+    .bind(ConfirmEmailCommandHandler)
+    .factory(() => new ConfirmEmailCommandHandler(elasticClient, locationsIndex))
     .scope(Scope.Singleton)
 
 try {

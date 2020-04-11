@@ -19,7 +19,7 @@ export class AddUserTimelineCommandHandler {
         let userId: string
         
         const mysqlConnection = mysql.createConnection(this.mysqlConnectionConfig)
-        mysqlConnection.query(`SELECT guid from Users where email = '${command.email}' limit 1`, (err, rows) => {
+        mysqlConnection.query(`SELECT guid from Users where email = '${command.email}' limit 1`, async (err, rows) => {
             if (err)
                 throw err
 
@@ -35,7 +35,7 @@ export class AddUserTimelineCommandHandler {
             }
             const timelineId = Guid.create().toString()
         
-            this.elasticClient.bulk({
+            await this.elasticClient.bulk({
                 refresh: "true",
                 body: command.locations
                     .map(location => new UserLocation(
@@ -50,24 +50,10 @@ export class AddUserTimelineCommandHandler {
                     .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
             })
 
-            // this.elasticClient.updateByQuery({
-            //     index: this.elasticIndex,
-            //     body: {
-            //         script: {
-            //             source: "ctx._source['isConfirmed'] = true",
-            //         },
-            //         query: {
-            //             match: {
-            //                 timelineId: timelineId
-            //             }
-            //         }
-            //     }    
-            // })
-
-            this.mailSender.SendMail(
+            await this.mailSender.SendMail(
                 command.email,
                 "Privacy Vs Germs Email Confirmation",
-                `Please confirm your email by clicking on this <a href="http://localhost:8086/locations/confirm/${userId}" target="_blank">link</a>`)
+                `Please confirm your email by clicking on this <a href="http://localhost:8081/locations/confirm/${timelineId}" target="_blank">link</a>`)
 
         })
 
