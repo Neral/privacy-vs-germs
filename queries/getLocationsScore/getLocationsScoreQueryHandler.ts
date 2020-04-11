@@ -18,12 +18,17 @@ export class GetLocationsScoreQueryHandler {
             body.push({}, {
                 query: {
                     bool: {
-                        must: {
+                        must: [{
                             geo_distance: {
                                 distance: "50m",
                                 coordinates: [location.longitude, location.latitude]
                             }
-                        }
+                        },
+                        {
+                            match: {
+                                isConfirmed: true
+                            }
+                        }]
                     }
                 },
                 size: 10000

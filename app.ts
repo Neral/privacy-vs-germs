@@ -83,7 +83,7 @@ try {
                     coordinates: { type: "geo_point" },
                     timeFrom: { type: "date" },
                     timeTo: { type: "date" },
-                    radius: { type: "number"},
+                    radius: { type: "integer" },
                     isConfirmed: { type: "boolean" },
                     userId: { type: "text" }
                 },
