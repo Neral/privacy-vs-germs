@@ -1,3 +1,4 @@
+import { MailSender } from "./../../infrastructure/mailSender"
 import { Guid } from "guid-typescript"
 import { AddUserTimelineCommand } from "./addUserTimelineCommand"
 import { Client } from "@elastic/elasticsearch"
@@ -9,7 +10,8 @@ export class AddUserTimelineCommandHandler {
     constructor(
         private elasticClient: Client,
         private elasticIndex: string,
-        private mysqlConnectionConfig: ConnectionConfig) { }
+        private mysqlConnectionConfig: ConnectionConfig,
+        private mailSender: MailSender) { }
 
     public async Handle(command: AddUserTimelineCommand): Promise<void> {
         await transformAndValidate(AddUserTimelineCommand, command)
@@ -31,8 +33,13 @@ export class AddUserTimelineCommandHandler {
             else {
                 userId = rows[0].guid
             }
+
+            this.mailSender.SendMail(
+                command.email,
+                "Privacy Vs Germs Email Confirmation",
+                `Please confirm your email by clicking on this <a href="http://localhost:8086/locations/confirm/${userId}" target="_blank">link</a>`)
         })
-        
+
         await this.elasticClient.bulk({
             refresh: "true",
             body: command.locations
@@ -45,5 +52,7 @@ export class AddUserTimelineCommandHandler {
                     location.timeTo))
                 .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
         })
+
+        //TODO: update with deployed version link, think about serving there frontend as well
     }
 }

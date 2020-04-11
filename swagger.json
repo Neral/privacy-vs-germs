@@ -203,6 +203,28 @@
 					}
 				]
 			}
+		},
+		"/locations/confirm/{confirmationCode}": {
+			"get": {
+				"operationId": "Confirm",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "confirmationCode",
+						"required": true,
+						"type": "string"
+					}
+				]
+			}
 		}
 	},
 	"produces": [
