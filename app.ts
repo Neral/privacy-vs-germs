@@ -1,3 +1,4 @@
+import { MailSender } from './infrastructure/mailSender';
 import express, { Request, Response, NextFunction } from "express"
 import cors from "cors"
 import bodyParser from "body-parser"
@@ -16,6 +17,8 @@ import { ConnectionConfig } from "mysql"
 const env = process.env
 const port = env.PORT || 8081
 const elasticSearchUri = env.ELASTICSEARCH_URI || "http://localhost:9200"
+const smtpUserName = env.SMTP_USERNAME || ""
+const smtpPassword = env.SMTP_PASSWORD || ""
 
 const app = express()
 app.use(cors())
@@ -36,6 +39,8 @@ const elasticConfig = {
 }
 const elasticClient = new Client(elasticConfig)
 const locationsIndex = "user-locations"
+
+const mailSender = new MailSender(smtpUserName, smtpPassword)
 
 const mysqlConfig: ConnectionConfig = {
     host: env.RDS_HOSTNAME,
