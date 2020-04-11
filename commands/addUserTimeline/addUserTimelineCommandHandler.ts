@@ -59,5 +59,6 @@ export class AddUserTimelineCommandHandler {
                 `Please confirm your email by clicking on this <a href="http://localhost:8081/locations/confirm/${timelineId}" target="_blank">link</a>`)
 
         //TODO: update with deployed version link, think about serving there frontend as well
-    }
+        })
+    }   
 }
