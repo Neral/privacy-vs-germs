@@ -23,6 +23,7 @@
         "class-validator": "^0.11.1",
         "cors": "^2.8.5",
         "express": "^4.17.1",
+        "geolib": "^3.2.1",
         "guid-typescript": "^1.0.9",
         "js-sha256": "^0.9.0",
         "mysql": "^2.18.1",

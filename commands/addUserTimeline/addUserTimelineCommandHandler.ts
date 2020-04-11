@@ -5,6 +5,8 @@ import { Client } from "@elastic/elasticsearch"
 import { UserLocation } from "../../elastic/userLocation"
 import { transformAndValidate } from "class-transformer-validator"
 import mysql, { ConnectionConfig } from "mysql"
+import { LocationsScoreCalculator } from "../../domain/locationsScoreCalculator"
+import { Config } from '../../config/Config';
 
 export class AddUserTimelineCommandHandler {
     constructor(
@@ -45,6 +47,7 @@ export class AddUserTimelineCommandHandler {
                         [location.longitude, location.latitude],
                         location.timeFrom,
                         location.timeTo,
+                        location.radius || Config.ACCURATE_DISTANCE,
                         false,
                         userId))
                     .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
@@ -54,8 +57,6 @@ export class AddUserTimelineCommandHandler {
                 command.email,
                 "Privacy Vs Germs Email Confirmation",
                 `Please confirm your email by clicking on this <a href="http://localhost:8081/locations/confirm/${timelineId}" target="_blank">link</a>`)
-
-        })
 
         //TODO: update with deployed version link, think about serving there frontend as well
     }

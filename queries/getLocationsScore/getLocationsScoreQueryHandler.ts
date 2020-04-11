@@ -6,6 +6,7 @@ import { UserLocation } from "../../elastic/userLocation"
 import { TimeInterval } from "../../domain/timeInterval"
 import { transformAndValidate } from "class-transformer-validator"
 import { plainToClass } from "class-transformer"
+import { LocationIntersectionCalculator } from "../../domain/locationIntersectionCalculator"
 
 export class GetLocationsScoreQueryHandler {
     constructor(private client: Client, private index: string) { }
@@ -38,19 +39,29 @@ export class GetLocationsScoreQueryHandler {
             const location = query.locations[i]
             const matchedLocations: UserLocation[] = searchResult.body.responses[i].hits.hits
                 .map((hit: any) => plainToClass(UserLocation, hit._source))
-            const score = matchedLocations
+            const intersectingLocations = matchedLocations.filter(userLocation => 
+                    LocationIntersectionCalculator.isIntersecting(userLocation, location)
+                )
+            const score = intersectingLocations
                 .map(matchedLocation => LocationsScoreCalculator.calculateExposureScore(
+                    // FIXME Calculate distance once before filtering
+                    LocationIntersectionCalculator.distance(matchedLocation, location),
+                    matchedLocation.radius,
                     new TimeInterval(location.timeFrom, location.timeTo),
-                    new TimeInterval(matchedLocation.timeFrom, matchedLocation.timeTo)))
+                    new TimeInterval(matchedLocation.timeFrom, matchedLocation.timeTo)
+                ))
                 .reduce((score, current) => score + current, 0)
-            locationsWithScore.push(new LocationWithScoreDto(
-                location.latitude,
-                location.longitude,
-                location.timeFrom,
-                location.timeTo,
-                score))
-        }
 
+            locationsWithScore.push(
+                new LocationWithScoreDto(
+                    location.latitude,
+                    location.longitude,
+                    location.timeFrom,
+                    location.timeTo,
+                    score
+                )
+            )
+        }
         return locationsWithScore
     }
 }

@@ -21,6 +21,11 @@
 				"timeTo": {
 					"type": "string",
 					"format": "date-time"
+				},
+				"radius": {
+					"type": "number",
+					"format": "double",
+					"x-nullable": true
 				}
 			},
 			"required": [
