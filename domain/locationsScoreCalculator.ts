@@ -1,7 +1,10 @@
 import { TimeInterval } from "./timeInterval"
+import { Config } from '../config/Config';
 
 export class LocationsScoreCalculator {
-    public static calculateExposureScore(checkTimeInterval: TimeInterval, positiveCaseTimeInterval: TimeInterval): number {
+    
+
+    public static calculateExposureScore(distance: number, radius: number, checkTimeInterval: TimeInterval, positiveCaseTimeInterval: TimeInterval): number {
         if (!checkTimeInterval)
             throw new Error("Check time interval must be provided.")
 
@@ -33,6 +36,8 @@ export class LocationsScoreCalculator {
         else
             exposure = checkTimeInterval.to.valueOf() - exposedTimeInterval.from.valueOf()
 
-        return exposure > 15 * 60 * 1000 ? 10 : 5
+        const score = exposure > 15 * 60 * 1000 ? 10 : 5
+        const isNearby = distance <= Config.ACCURATE_DISTANCE
+        return isNearby ? score : (distance / radius) * score
     }
 }
