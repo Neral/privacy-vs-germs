@@ -56,9 +56,13 @@ export class AddUserTimelineCommandHandler {
             await this.mailSender.SendMail(
                 command.email,
                 "Privacy Vs Germs Email Confirmation",
-                `Please confirm your email by clicking on this <a href="http://localhost:8081/locations/confirm/${timelineId}" target="_blank">link</a>`)
-
-        //TODO: update with deployed version link, think about serving there frontend as well
+                `<html><body>
+                <p>Thank you</p>
+                <p>We have received your data submission. In order to finalize it please follow link provided below.</p>
+                <p>By clicking on link below you consent and agree that 3 weeks of your Google Timeline data will be anonymously stored on our system.</p>
+                <p><a href="http://privacy-vs-germs.us-east-2.elasticbeanstalk.com/locations/confirm/${timelineId}" target="_blank">Agree and Submit</a></p><p>Privacy VS Germs Team</p>
+                </body></html>`
+                )
         })
     }   
 }
