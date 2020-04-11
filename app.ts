@@ -11,6 +11,7 @@ import { DeleteUserTimelineDataCommandHandler } from "./commands/deleteUserTimel
 import { GetLocationsScoreQueryHandler } from "./queries/getLocationsScore/getLocationsScoreQueryHandler"
 import { ValidationError } from "class-validator"
 import { ValidateError } from "tsoa"
+import { ConnectionConfig } from "mysql"
 
 const env = process.env
 const port = env.PORT || 8081
@@ -30,12 +31,22 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
         res.status(500).send("Something went wrong. Please try again later.")
 })
 
-const elasticClient = new Client({ node: elasticSearchUri })
+const elasticConfig = {
+    node: elasticSearchUri
+}
+const elasticClient = new Client(elasticConfig)
 const locationsIndex = "user-locations"
+
+const mysqlConfig: ConnectionConfig = {
+    host: env.RDS_HOSTNAME,
+    database: env.RDS_DB_NAME,
+    user: env.RDS_USERNAME,
+    password: env.RDS_PASSWORD
+}
 
 Container
     .bind(AddUserTimelineCommandHandler)
-    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex))
+    .factory(() => new AddUserTimelineCommandHandler(elasticClient, locationsIndex, mysqlConfig))
     .scope(Scope.Singleton)
 
 Container

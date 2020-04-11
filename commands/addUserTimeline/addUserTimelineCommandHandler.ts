@@ -3,49 +3,47 @@ import { AddUserTimelineCommand } from "./addUserTimelineCommand"
 import { Client } from "@elastic/elasticsearch"
 import { UserLocation } from "../../elastic/userLocation"
 import { transformAndValidate } from "class-transformer-validator"
-import mysql from "mysql"
+import mysql, { ConnectionConfig } from "mysql"
 
 export class AddUserTimelineCommandHandler {
-    constructor(private client: Client, private index: string) { }
+    constructor(
+        private elasticClient: Client,
+        private elasticIndex: string,
+        private mysqlConnectionConfig: ConnectionConfig) { }
 
     public async Handle(command: AddUserTimelineCommand): Promise<void> {
-
-        let timelineId = Guid.create().toString()
         await transformAndValidate(AddUserTimelineCommand, command)
 
-        const env = process.env
-        const connection = mysql.createConnection({
-            host: env.RDS_HOSTNAME,
-            database : env.RDS_DB_NAME,
-            user: env.RDS_USERNAME,
-            password: env.RDS_PASSWORD
-        })
+        let userId: string
 
-        connection.query(`SELECT guid from Users where email = '${command.email}'`, (err, rows) => {
-            if (err) console.log(err)
-            if (rows.length==0) {
-                connection.query(`INSERT into Users (guid, email) values ('${timelineId}', '${command.email}')`, (err) => {
-                    if (err) console.log(err)
-                });
+        const mysqlConnection = mysql.createConnection(this.mysqlConnectionConfig)
+        mysqlConnection.query(`SELECT guid from Users where email = '${command.email}' limit 1`, (err, rows) => {
+            if (err)
+                throw err
+
+            if (rows.length == 0) {
+                userId = Guid.create().toString()
+                mysqlConnection.query(`INSERT into Users (guid, email) values ('${userId}', '${command.email}')`, (err) => {
+                    if (err)
+                        throw err
+                })
             }
             else {
-                timelineId = rows[0].guid
+                userId = rows[0].guid
             }
-
-            this.client.bulk({
-                refresh: "true",
-                body: command.locations
-                    .map(location => new UserLocation(
-                        timelineId,
-                        command.testType,
-                        command.testDate,
-                        [location.longitude, location.latitude],
-                        location.timeFrom,
-                        location.timeTo))
-                    .flatMap(location => [{ index: { _index: this.index } }, location])
-            })
-            
-        });
-
+        })
+        
+        await this.elasticClient.bulk({
+            refresh: "true",
+            body: command.locations
+                .map(location => new UserLocation(
+                    userId,
+                    command.testType,
+                    command.testDate,
+                    [location.longitude, location.latitude],
+                    location.timeFrom,
+                    location.timeTo))
+                .flatMap(location => [{ index: { _index: this.elasticIndex } }, location])
+        })
     }
 }
