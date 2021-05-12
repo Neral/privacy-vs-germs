@@ -27,7 +27,7 @@
         "guid-typescript": "^1.0.9",
         "js-sha256": "^0.9.0",
         "mysql": "^2.18.1",
-        "nodemailer": "^6.4.6",
+        "nodemailer": "^6.4.16",
         "swagger-ui-express": "^4.1.4",
         "tsoa": "^2.5.13",
         "typescript": "^3.8.3",
